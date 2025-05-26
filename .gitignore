@@ -118,3 +118,4 @@ coverage.xml
 *.venv
 *.env.bak
 *.venv.bak
+segundo_previo/serviceAccountKey.json
