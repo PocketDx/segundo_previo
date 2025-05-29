@@ -1,0 +1,1 @@
+Pega en esta carpeta la llave de la cuenta de servicio de Firebase que se utiliza para la autenticación de los usuarios.

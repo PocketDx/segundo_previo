@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+<body>
+  <div class="p-8 space-y-4">
+    <button id="loginButton" class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">
+      Iniciar Sesión con Google
+    </button>
+    <button id="logoutButton" class="bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-700">
+      Cerrar Sesión
+    </button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCG7tUMkF4f5JbWROWKjugdhUWYqZ2Fh84",
+      authDomain: "ejemplo-web-8068d.firebaseapp.com",
+      projectId: "ejemplo-web-8068d",
+      storageBucket: "ejemplo-web-8068d.firebasestorage.app",
+      messagingSenderId: "268541243140",
+      appId: "1:268541243140:web:0e36baabb8af7a42fdea51"
+    };
+
+    const app      = initializeApp(firebaseConfig);
+    const auth     = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    const getCsrf = () =>
+      document.querySelector('meta[name="csrf-token"]').content;
+
+    document.getElementById('logoutButton').addEventListener('click', () => {
+      signOut(auth).catch(console.error);
+    });
+
+    document.getElementById('loginButton').addEventListener('click', () => {
+      signInWithPopup(auth, provider)
+        .then(async result => {
+          const idToken = await result.user.getIdToken();
+          // Enviar al backend
+          console.log("ID Token:", idToken);
+          console.log("User", result.user);
+          const resp = await fetch("{% url 'firebase_login' %}", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCsrf()
+            },
+            body: JSON.stringify({ id_token: idToken })
+          });
+
+          if (resp.ok) {
+            alert("Autenticación exitosa, token recibido.");
+          } else {
+            const err = await resp.json();
+            console.error("Backend error:", err);
+            console.error(err.detail || "Error en autenticación");
+          }
+        })
+        .catch(error => {
+
+            console.error(error);
+        });
+    });
+  </script>
+</body>
+</html>
