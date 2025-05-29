@@ -2,10 +2,5 @@ asgiref==3.8.1
 Django==5.2
 django-filter==25.1
 djangorestframework==3.16.0
-<<<<<<<< HEAD:backend/requirements.txt
 djangorestframework-simplejwt==5.5.0
 firebase_admin==6.8.0
-========
-sqlparse==0.5.3
-firebase_admin
->>>>>>>> b6dcf97c2f3db48f24ea6659342dc0ac936155a9:backend/segundo_previo/requirements.txt
